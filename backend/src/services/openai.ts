@@ -1,7 +1,10 @@
 import OpenAI from "openai";
 
-const apiKey = process.env.OPENAI_API_KEY || "";
-const isMockMode = !apiKey || apiKey.includes("your_openai");
+const rawApiKey = process.env.OPENAI_API_KEY || "";
+let apiKey = rawApiKey.trim();
+if ((apiKey.startsWith('"') && apiKey.endsWith('"')) || (apiKey.startsWith("'") && apiKey.endsWith("'"))) {
+  apiKey = apiKey.slice(1, -1).trim();
+}
 
 let rawBaseURL = process.env.OPENAI_BASE_URL || "";
 let baseURL: string | undefined = undefined;
@@ -13,6 +16,14 @@ if (rawBaseURL) {
   }
 }
 
+console.log("--- DEBUG API KEY ---");
+console.log("Raw Key length:", rawApiKey.length);
+console.log("Raw Key starts with:", JSON.stringify(rawApiKey.substring(0, 15)));
+console.log("Cleaned Key length:", apiKey.length);
+console.log("Cleaned Key starts with:", JSON.stringify(apiKey.substring(0, 15)));
+console.log("---------------------");
+
+const isMockMode = !apiKey || apiKey.includes("your_openai");
 const openai = isMockMode ? null : new OpenAI({ apiKey, baseURL });
 
 export interface AITaskResult {
