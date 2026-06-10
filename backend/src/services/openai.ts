@@ -82,12 +82,10 @@ export async function processTaskWithAI(
 
   let apiModel = model;
   if (baseURL && (baseURL.includes("generativelanguage.googleapis.com") || baseURL.includes("google"))) {
-    if (model === "gpt-4o" || model === "gpt-4-turbo") {
-      apiModel = "gemini-3.1-flash-lite";
-    } else if (model === "gpt-3.5-turbo") {
-      apiModel = "gemini-2.5-flash-lite";
-    } else if (!model.startsWith("gemini-")) {
-      apiModel = "gemini-3.1-flash-lite";
+    if (model.includes("pro")) {
+      apiModel = "gemini-1.5-pro";
+    } else {
+      apiModel = "gemini-1.5-flash";
     }
     console.log(`🤖 Google Gemini detected. Mapping model "${model}" -> "${apiModel}"`);
   }
