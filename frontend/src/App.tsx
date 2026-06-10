@@ -15,6 +15,7 @@ import MarketplacePage from "./pages/MarketplacePage";
 import AgentDetailPage from "./pages/AgentDetailPage";
 import TaskStatusPage from "./pages/TaskStatusPage";
 import DashboardPage from "./pages/DashboardPage";
+import CreateAgentPage from "./pages/CreateAgentPage";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ export default function App() {
                   <Route path="/agent/:id" element={<AgentDetailPage />} />
                   <Route path="/task/:id" element={<TaskStatusPage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/create-agent" element={<CreateAgentPage />} />
                 </Routes>
               </main>
 

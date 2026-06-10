@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const NAV = [
   { to: "/marketplace", label: "Marketplace" },
+  { to: "/create-agent", label: "Create Agent" },
   { to: "/dashboard",   label: "Dashboard" },
 ];
 

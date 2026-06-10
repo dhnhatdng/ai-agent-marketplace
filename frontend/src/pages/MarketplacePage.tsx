@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { useAgents } from "../hooks/useAgents";
 import AgentCard from "../components/agent/AgentCard";
 
@@ -34,13 +34,18 @@ export default function MarketplacePage() {
       </div>
 
       {/* Search + Filter */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <input
           placeholder="Search agents..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="flex-1 bg-arc-card border border-arc-border rounded-2xl px-4 py-3 text-arc-text outline-none focus:border-arc-pink/50 transition-all"
         />
+        <Link to="/create-agent"
+          className="flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all shadow-md shadow-arc-pink/10 hover:shadow-arc-pink/20 hover:opacity-90"
+          style={{ background: "linear-gradient(135deg, var(--arc-pink), var(--arc-purple))" }}>
+          <span>🚀 Deploy New Agent</span>
+        </Link>
       </div>
 
       <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
