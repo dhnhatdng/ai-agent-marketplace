@@ -156,6 +156,14 @@ function encryptEntitySecret(): string {
   }
   cleanedKey = cleanedKey.replace(/\\n/g, "\n");
 
+  // Automatically wrap with PEM headers/footers if missing
+  if (!cleanedKey.includes("-----BEGIN PUBLIC KEY-----")) {
+    cleanedKey = `-----BEGIN PUBLIC KEY-----\n${cleanedKey}`;
+  }
+  if (!cleanedKey.includes("-----END PUBLIC KEY-----")) {
+    cleanedKey = `${cleanedKey}\n-----END PUBLIC KEY-----`;
+  }
+
   console.log("Cleaned Key length:", cleanedKey.length);
   console.log("Cleaned Key starts with:", JSON.stringify(cleanedKey.substring(0, 40)));
   console.log("Cleaned Key ends with:", JSON.stringify(cleanedKey.substring(cleanedKey.length - 40)));

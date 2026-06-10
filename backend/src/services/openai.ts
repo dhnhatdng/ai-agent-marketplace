@@ -109,7 +109,7 @@ export async function processTaskWithAI(
     } else if (model === "gemini-2.5-flash-lite") {
       apiModel = "gemini-2.5-flash-lite";
     } else {
-      apiModel = "gemini-3.5-flash";
+      apiModel = "gemini-2.5-flash";
     }
   }
 
