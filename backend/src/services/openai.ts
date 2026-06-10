@@ -117,6 +117,8 @@ export async function processTaskWithAI(
   console.log("Base URL:", baseURL || "Default (OpenAI)");
   console.log("Original Model:", model);
   console.log("Mapped Model:", apiModel);
+  console.log("API Key length:", apiKey ? apiKey.length : 0);
+  console.log("API Key starts with:", apiKey ? JSON.stringify(apiKey.substring(0, 15)) : "empty");
   console.log("------------------------");
 
   try {
