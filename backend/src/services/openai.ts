@@ -2,7 +2,16 @@ import OpenAI from "openai";
 
 const apiKey = process.env.OPENAI_API_KEY || "";
 const isMockMode = !apiKey || apiKey.includes("your_openai");
-const baseURL = process.env.OPENAI_BASE_URL || undefined;
+
+let rawBaseURL = process.env.OPENAI_BASE_URL || "";
+let baseURL: string | undefined = undefined;
+
+if (rawBaseURL) {
+  baseURL = rawBaseURL.trim();
+  if (!baseURL.endsWith("/")) {
+    baseURL = baseURL + "/";
+  }
+}
 
 const openai = isMockMode ? null : new OpenAI({ apiKey, baseURL });
 
@@ -81,14 +90,19 @@ export async function processTaskWithAI(
   }
 
   let apiModel = model;
-  if (baseURL && (baseURL.includes("generativelanguage.googleapis.com") || baseURL.includes("google"))) {
+  if (rawBaseURL && (rawBaseURL.includes("generativelanguage.googleapis.com") || rawBaseURL.includes("google"))) {
     if (model.includes("pro")) {
       apiModel = "gemini-1.5-pro";
     } else {
       apiModel = "gemini-1.5-flash";
     }
-    console.log(`🤖 Google Gemini detected. Mapping model "${model}" -> "${apiModel}"`);
   }
+
+  console.log("--- DEBUG AI REQUEST ---");
+  console.log("Base URL:", baseURL || "Default (OpenAI)");
+  console.log("Original Model:", model);
+  console.log("Mapped Model:", apiModel);
+  console.log("------------------------");
 
   try {
     const response = await openai.chat.completions.create({
