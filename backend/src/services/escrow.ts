@@ -28,8 +28,11 @@ const ESCROW_ABI = [
   "event TaskCompleted(bytes32 indexed taskId, address indexed agentWallet, uint256 amount)",
 ];
 
-const rpcUrl = process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network";
-const privateKey = process.env.DEPLOYER_PRIVATE_KEY || "";
+const rpcUrl = (process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network").trim();
+let privateKey = (process.env.DEPLOYER_PRIVATE_KEY || "").trim();
+if ((privateKey.startsWith('"') && privateKey.endsWith('"')) || (privateKey.startsWith("'") && privateKey.endsWith("'"))) {
+  privateKey = privateKey.slice(1, -1).trim();
+}
 
 const isMockBlockchain = 
   !privateKey || 
@@ -44,6 +47,10 @@ let escrowContract: ethers.Contract | null = null;
 if (!isMockBlockchain) {
   try {
     provider = new ethers.JsonRpcProvider(rpcUrl);
+    console.log("--- DEBUG WALLET KEY ---");
+    console.log("Key length:", privateKey.length);
+    console.log("Key starts with:", JSON.stringify(privateKey.substring(0, 6)));
+    console.log("------------------------");
     operatorWallet = new ethers.Wallet(privateKey, provider);
     escrowContract = new ethers.Contract(contracts.agentEscrow, ESCROW_ABI, operatorWallet);
     console.log(`⛓️ Escrow Service connected to Arc Testnet. Contract: ${contracts.agentEscrow}`);
