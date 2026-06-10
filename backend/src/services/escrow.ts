@@ -64,10 +64,6 @@ let escrowContract: ethers.Contract | null = null;
 if (!isMockBlockchain) {
   try {
     provider = new ethers.JsonRpcProvider(rpcUrl);
-    console.log("--- DEBUG WALLET KEY ---");
-    console.log("Key length:", privateKey.length);
-    console.log("Key starts with:", JSON.stringify(privateKey.substring(0, 6)));
-    console.log("------------------------");
     operatorWallet = new ethers.Wallet(privateKey, provider);
     escrowContract = new ethers.Contract(contracts.agentEscrow, ESCROW_ABI, operatorWallet);
     console.log(`⛓️ Escrow Service connected to Arc Testnet. Contract: ${contracts.agentEscrow}`);

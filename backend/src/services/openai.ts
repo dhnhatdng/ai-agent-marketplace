@@ -16,12 +16,6 @@ if (rawBaseURL) {
   }
 }
 
-console.log("--- DEBUG API KEY ---");
-console.log("Raw Key length:", rawApiKey.length);
-console.log("Raw Key starts with:", JSON.stringify(rawApiKey.substring(0, 15)));
-console.log("Cleaned Key length:", apiKey.length);
-console.log("Cleaned Key starts with:", JSON.stringify(apiKey.substring(0, 15)));
-console.log("---------------------");
 
 const isMockMode = !apiKey || apiKey.includes("your_openai");
 const openai = isMockMode ? null : new OpenAI({ apiKey, baseURL });
@@ -113,13 +107,11 @@ export async function processTaskWithAI(
     }
   }
 
-  console.log("--- DEBUG AI REQUEST ---");
+  console.log("--- AI REQUEST ---");
   console.log("Base URL:", baseURL || "Default (OpenAI)");
   console.log("Original Model:", model);
   console.log("Mapped Model:", apiModel);
-  console.log("API Key length:", apiKey ? apiKey.length : 0);
-  console.log("API Key starts with:", apiKey ? JSON.stringify(apiKey.substring(0, 15)) : "empty");
-  console.log("------------------------");
+  console.log("------------------");
 
   try {
     const response = await openai.chat.completions.create({

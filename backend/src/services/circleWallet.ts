@@ -145,11 +145,6 @@ async function getOrCreateWalletSet(): Promise<string> {
 }
 
 function encryptEntitySecret(): string {
-  console.log("--- DEBUG PUBLIC KEY ---");
-  console.log("Original PUBLIC_KEY length:", PUBLIC_KEY ? PUBLIC_KEY.length : 0);
-  console.log("Original PUBLIC_KEY starts with:", PUBLIC_KEY ? JSON.stringify(PUBLIC_KEY.substring(0, 40)) : "empty");
-  console.log("Original PUBLIC_KEY ends with:", PUBLIC_KEY ? JSON.stringify(PUBLIC_KEY.substring(PUBLIC_KEY.length - 40)) : "empty");
-
   let cleanedKey = PUBLIC_KEY.trim();
   if ((cleanedKey.startsWith('"') && cleanedKey.endsWith('"')) || (cleanedKey.startsWith("'") && cleanedKey.endsWith("'"))) {
     cleanedKey = cleanedKey.slice(1, -1).trim();
@@ -163,11 +158,6 @@ function encryptEntitySecret(): string {
   if (!cleanedKey.includes("-----END PUBLIC KEY-----")) {
     cleanedKey = `${cleanedKey}\n-----END PUBLIC KEY-----`;
   }
-
-  console.log("Cleaned Key length:", cleanedKey.length);
-  console.log("Cleaned Key starts with:", JSON.stringify(cleanedKey.substring(0, 40)));
-  console.log("Cleaned Key ends with:", JSON.stringify(cleanedKey.substring(cleanedKey.length - 40)));
-  console.log("------------------------");
 
   const encrypted = crypto.publicEncrypt(
     { key: cleanedKey, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" },
