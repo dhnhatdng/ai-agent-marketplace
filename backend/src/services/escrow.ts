@@ -10,13 +10,30 @@ dotenv.config({ path: path.join(__dirname, "../../.env"), override: true });
 
 // Load contract addresses safely
 let contracts: { agentEscrow: string } = { agentEscrow: "" };
-const contractsPath = path.join(__dirname, "../constants/contracts.json");
-if (fs.existsSync(contractsPath)) {
+const possiblePaths = [
+  path.join(__dirname, "../constants/contracts.json"), // ts-node local
+  path.join(__dirname, "../../src/constants/contracts.json"), // dist running on Render referencing src
+  path.join(process.cwd(), "src/constants/contracts.json"), // process cwd path
+  path.join(process.cwd(), "backend/src/constants/contracts.json") // fallback
+];
+
+let contractsPath = "";
+for (const p of possiblePaths) {
+  if (fs.existsSync(p)) {
+    contractsPath = p;
+    break;
+  }
+}
+
+if (contractsPath) {
   try {
     contracts = JSON.parse(fs.readFileSync(contractsPath, "utf-8"));
+    console.log(`Loaded contracts from: ${contractsPath}`);
   } catch (e) {
     console.error("Error loading contracts.json:", e);
   }
+} else {
+  console.warn("⚠️ Could not find contracts.json in any of the expected paths!");
 }
 
 const ESCROW_ABI = [
