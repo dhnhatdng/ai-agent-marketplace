@@ -84,123 +84,124 @@ export default function CreateAgentPage() {
         {/* Form Column */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-arc-card border border-arc-border rounded-3xl p-8 shadow-sm">
-            {!isConnected ? (
-              <div className="text-center py-12 space-y-4">
-                <div className="text-5xl">🔒</div>
-                <h3 className="text-lg font-bold">Connect Wallet to Deploy</h3>
-                <p className="text-arc-muted text-sm max-w-sm mx-auto">
-                  You need to connect your MetaMask or Web3 wallet on the Arc Network to create a custom AI Agent.
-                </p>
-                <div className="flex justify-center pt-2">
-                  <ConnectButton />
+            <form onSubmit={handleDeploy} className="space-y-5">
+              {formError && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm">
+                  ⚠️ {formError}
                 </div>
-              </div>
-            ) : (
-              <form onSubmit={handleDeploy} className="space-y-5">
-                {formError && (
-                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm">
-                    ⚠️ {formError}
-                  </div>
-                )}
-                {formSuccess && (
-                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 p-4 rounded-xl text-sm">
-                    ✨ {formSuccess}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Agent Name</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. Translation Bot"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Price (USDC)</label>
-                    <input
-                      required
-                      type="number"
-                      step="0.05"
-                      min="0.05"
-                      placeholder="e.g. 1.0"
-                      value={priceUsdc}
-                      onChange={e => setPriceUsdc(e.target.value)}
-                      className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm font-mono"
-                    />
-                  </div>
+              )}
+              {formSuccess && (
+                <div className="bg-green-500/10 border border-green-500/30 text-green-400 p-4 rounded-xl text-sm">
+                  ✨ {formSuccess}
                 </div>
+              )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Category</label>
-                    <select
-                      value={category}
-                      onChange={e => setCategory(e.target.value)}
-                      className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
-                    >
-                      <option value="writing">✍️ Writing</option>
-                      <option value="analysis">📊 Analysis</option>
-                      <option value="translation">🌐 Translation</option>
-                      <option value="coding">💻 Coding</option>
-                      <option value="research">🔍 Research</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">AI Engine Model</label>
-                    <select
-                      value={model}
-                      onChange={e => setModel(e.target.value)}
-                      className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
-                    >
-                      <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended)</option>
-                      <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite (Fast)</option>
-                      <option value="gpt-4o">GPT-4o (Standard)</option>
-                      <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                    </select>
-                  </div>
-                </div>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Short Description</label>
+                  <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Agent Name</label>
                   <input
                     required
                     type="text"
-                    placeholder="Short summary of what this agent excels at..."
-                    value={description}
-                    onChange={e => setDescription(e.target.value)}
+                    placeholder="e.g. Translation Bot"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
                     className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">System Prompt (AI Persona)</label>
-                  <textarea
+                  <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Price (USDC)</label>
+                  <input
                     required
-                    rows={5}
-                    placeholder="Define the behavior, rules, and style of your Agent. Example: 'You are an expert crypto translator. Translate the text into Vietnamese while keeping technical terms correct.'"
-                    value={systemPrompt}
-                    onChange={e => setSystemPrompt(e.target.value)}
-                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm resize-y"
+                    type="number"
+                    step="0.05"
+                    min="0.05"
+                    placeholder="e.g. 1.0"
+                    value={priceUsdc}
+                    onChange={e => setPriceUsdc(e.target.value)}
+                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm font-mono"
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Category</label>
+                  <select
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
+                  >
+                    <option value="writing">✍️ Writing</option>
+                    <option value="analysis">📊 Analysis</option>
+                    <option value="translation">🌐 Translation</option>
+                    <option value="coding">💻 Coding</option>
+                    <option value="research">🔍 Research</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">AI Engine Model</label>
+                  <select
+                    value={model}
+                    onChange={e => setModel(e.target.value)}
+                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
+                  >
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended)</option>
+                    <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite (Fast)</option>
+                    <option value="gpt-4o">GPT-4o (Standard)</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">Short Description</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="Short summary of what this agent excels at..."
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">System Prompt (AI Persona)</label>
+                <textarea
+                  required
+                  rows={5}
+                  placeholder="Define the behavior, rules, and style of your Agent. Example: 'You are an expert crypto translator. Translate the text into Vietnamese while keeping technical terms correct.'"
+                  value={systemPrompt}
+                  onChange={e => setSystemPrompt(e.target.value)}
+                  className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm resize-y"
+                />
+              </div>
+
+              {isConnected ? (
                 <button
                   type="submit"
                   disabled={isDeploying}
-                  className="w-full py-3.5 rounded-xl text-sm font-bold text-white shadow-lg shadow-arc-pink/20 hover:shadow-arc-pink/35 disabled:opacity-50 transition-all duration-200"
+                  className="w-full py-3.5 rounded-xl text-sm font-bold text-white shadow-lg shadow-arc-pink/20 hover:shadow-arc-pink/35 disabled:opacity-50 transition-all duration-200 cursor-pointer"
                   style={{ background: "linear-gradient(135deg, var(--arc-pink), var(--arc-purple))" }}
                 >
                   {isDeploying ? "Deploying & Provisioning Circle Wallet..." : "🚀 Deploy Custom Agent"}
                 </button>
-              </form>
-            )}
+              ) : (
+                <div className="space-y-3">
+                  <button
+                    disabled
+                    className="w-full py-3.5 bg-arc-border/30 border border-arc-border rounded-xl text-sm font-bold text-arc-muted cursor-not-allowed"
+                  >
+                    🔌 Connect Wallet in Header to Deploy
+                  </button>
+                  <p className="text-center text-[11px] text-arc-muted">
+                    Please connect your Web3 wallet (MetaMask) on the Arc Network to enable deployment.
+                  </p>
+                </div>
+              )}
+            </form>
           </div>
         </div>
 
