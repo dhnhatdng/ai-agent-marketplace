@@ -145,7 +145,12 @@ async function getOrCreateWalletSet(): Promise<string> {
 }
 
 function encryptEntitySecret(): string {
-  const cleanedKey = PUBLIC_KEY.replace(/\\n/g, "\n");
+  let cleanedKey = PUBLIC_KEY.trim();
+  if ((cleanedKey.startsWith('"') && cleanedKey.endsWith('"')) || (cleanedKey.startsWith("'") && cleanedKey.endsWith("'"))) {
+    cleanedKey = cleanedKey.slice(1, -1).trim();
+  }
+  cleanedKey = cleanedKey.replace(/\\n/g, "\n");
+
   const encrypted = crypto.publicEncrypt(
     { key: cleanedKey, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" },
     Buffer.from(ENTITY_SECRET, "hex")
