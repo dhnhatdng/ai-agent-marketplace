@@ -145,8 +145,9 @@ async function getOrCreateWalletSet(): Promise<string> {
 }
 
 function encryptEntitySecret(): string {
+  const cleanedKey = PUBLIC_KEY.replace(/\\n/g, "\n");
   const encrypted = crypto.publicEncrypt(
-    { key: PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" },
+    { key: cleanedKey, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" },
     Buffer.from(ENTITY_SECRET, "hex")
   );
   return encrypted.toString("base64");
