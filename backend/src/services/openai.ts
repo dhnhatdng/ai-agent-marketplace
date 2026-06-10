@@ -92,9 +92,13 @@ export async function processTaskWithAI(
   let apiModel = model;
   if (rawBaseURL && (rawBaseURL.includes("generativelanguage.googleapis.com") || rawBaseURL.includes("google"))) {
     if (model.includes("pro")) {
-      apiModel = "gemini-1.5-pro";
+      apiModel = "gemini-2.5-pro";
+    } else if (model === "gemini-3.1-flash-lite") {
+      apiModel = "gemini-3.1-flash-lite";
+    } else if (model === "gemini-2.5-flash-lite") {
+      apiModel = "gemini-2.5-flash-lite";
     } else {
-      apiModel = "gemini-1.5-flash";
+      apiModel = "gemini-3.5-flash";
     }
   }
 
