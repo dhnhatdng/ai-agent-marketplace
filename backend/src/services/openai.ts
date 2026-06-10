@@ -149,6 +149,31 @@ export async function processTaskWithAI(
     };
   } catch (error: any) {
     console.warn(`⚠️ OpenAI API error: ${error.message}. Falling back to mock AI generation.`);
+    
+    // Debug: Fetch raw response from Google to inspect the error body
+    try {
+      const axios = require("axios");
+      console.log("🔍 Attempting raw request to inspect error body...");
+      await axios.post(`${baseURL}chat/completions`, {
+        model: apiModel,
+        messages: [
+          { role: "user", content: taskDescription }
+        ],
+        max_tokens: 100
+      }, {
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        }
+      });
+    } catch (axiosErr: any) {
+      console.log("--- RAW API ERROR ---");
+      console.log("Status:", axiosErr.response?.status);
+      console.log("Headers:", JSON.stringify(axiosErr.response?.headers || {}));
+      console.log("Body:", JSON.stringify(axiosErr.response?.data || "no data"));
+      console.log("----------------------");
+    }
+    
     return runMock();
   }
 }
