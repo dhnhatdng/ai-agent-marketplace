@@ -45,9 +45,9 @@
       "model": "gpt-4o",
       "circle_wallet_id": "9f764531-062f-5e2c-9cce-f1a68a174b4a",
       "circle_wallet_address": "0x8fd89595c6af27c702a29dff2a566d646b10c90e",
-      "total_tasks": 2,
-      "total_earned": 1.9,
-      "rating": 4,
+      "total_tasks": 3,
+      "total_earned": 2.85,
+      "rating": 4.5,
       "is_active": 1,
       "created_at": "2026-06-09T07:38:55.245Z"
     }
@@ -244,6 +244,22 @@
       "error_message": "",
       "created_at": "2026-06-09T08:23:53.094Z",
       "completed_at": "2026-06-09T08:24:08.895Z"
+    },
+    {
+      "id": "0d663766-b307-49ca-93c0-c5d348d0a9b9",
+      "task_id_hex": "0xdfa4a603a13c67753ff529377a1f63788c1d64a1e0b01554f7c8b5087270acd7",
+      "agent_id": "6058574a-94e0-41c3-b37b-365ed8f9c217",
+      "client_address": "0x66faC64dd850bc5e4fad4a3c4208706417278346",
+      "description": "Viêt giúp tôi khoảng 500 từ về dự án Axis.",
+      "status": "completed",
+      "price_usdc": 1,
+      "tx_lock_hash": "0x4cab148a2fa8e1d07124e24e3694d8c7cda2aff14464ee225458f095b755255d",
+      "tx_complete_hash": "0xcf6e2c5bca96e7ed2c2e3444a770c4a25179d382b2168309e4e31db87ba48e2e",
+      "ai_result": "**Axis: \"Cuộc cách mạng\" thanh khoản và sự trỗi dậy của mô hình Fixed-Rate Lending**\n\nTrong không gian DeFi hiện tại, khi thị trường biến động mạnh, các nhà đầu tư thường đối mặt với một vấn đề nhức nhối: Sự không chắc chắn về lợi nhuận. Hầu hết các giao thức lending đều dựa trên lãi suất thả nổi (variable interest rate), khiến việc lập kế hoạch tài chính trở nên khó khăn. Axis xuất hiện như một \"mảnh ghép còn thiếu\", mang đến giải pháp cho vay và đi vay với lãi suất cố định (fixed-rate) một cách tinh gọn, hiệu quả và phi tập trung.\n\n### Axis là gì?\nAxis không chỉ là một giao thức cho vay thông thường; nó là một thị trường tài chính dựa trên cơ chế đấu giá (auction-based) cho phép người dùng giao dịch các công cụ nợ với lãi suất cố định. Thay vì phụ thuộc vào các thuật toán phức tạp của các pool thanh khoản truyền thống, Axis tạo ra một môi trường nơi người vay có thể chốt chi phí vốn và người cho vay có thể đảm bảo lợi nhuận kỳ vọng ngay từ đầu.\n\n### Tại sao Axis lại khác biệt?\n\n1. **Cơ chế đấu giá (Auction-based Mechanism):** Điểm sáng nhất của Axis chính là cách nó xác định giá. Bằng việc sử dụng cơ chế đấu giá, Axis cho phép thị trường tự tìm ra mức lãi suất cân bằng dựa trên cung cầu thực tế. Điều này loại bỏ sự phụ thuộc vào các oracle bên ngoài để điều chỉnh lãi suất, giúp giao thức trở nên bền vững và chống chịu tốt hơn trước các cuộc tấn công thao túng giá.\n2. **Khả năng dự báo (Predictability):** Đối với các tổ chức và nhà đầu tư chuyên nghiệp, việc biết chính xác số tiền lãi phải trả hoặc nhận được là yếu tố sống còn. Axis cho phép người dùng \"khóa\" lợi nhuận trong một khoảng thời gian nhất định, giúp giảm thiểu rủi ro từ sự biến động lãi suất của thị trường.\n3. **Hiệu quả vốn tối ưu:** Axis tối ưu hóa việc phân bổ vốn bằng cách kết nối trực tiếp những người muốn vay và cho vay thông qua các phiên đấu giá hiệu quả. Điều này giúp giảm thiểu độ trượt giá (slippage) và chi phí giao dịch, tạo ra một môi trường thanh khoản lành mạnh hơn.\n\n### Tương lai của DeFi và Axis\nThị trường DeFi đang chuyển mình từ giai đoạn \"thử nghiệm\" sang giai đoạn \"tối ưu hóa\". Những dự án như Axis đóng vai trò quan trọng trong việc xây dựng các công cụ tài chính cấp tổ chức (institutional-grade) ngay trên nền tảng blockchain.\n\nKhi các giao thức như Axis tích hợp sâu hơn vào hệ sinh thái DeFi, chúng ta sẽ thấy sự ra đời của các chiến lược đầu tư phức tạp hơn, chẳng hạn như hedging lãi suất hay quản trị rủi ro danh mục đầu tư một cách chuyên nghiệp. Đối với những nhà đầu tư thông thái, Axis không chỉ là một công cụ, đó là một hạ tầng nền tảng cho phép họ kiểm soát vận mệnh tài chính của mình trong một thị trường vốn dĩ đầy rẫy sự bất định.\n\n### Lời kết\nAxis đang chứng minh rằng tính đơn giản trong thiết kế nhưng đột phá trong cơ chế vận hành chính là chìa khóa để thu hút dòng tiền thông minh. Trong bối cảnh DeFi cần những giải pháp thực tế hơn là các mô hình \"ponzi\" ngắn hạn, Axis nổi lên như một điểm sáng về tính ứng dụng và giá trị bền vững. Nếu bạn là một nhà đầu tư đang tìm kiếm sự ổn định trong một thị trường biến động, Axis chắc chắn là cái tên cần được đưa vào danh sách theo dõi sát sao trong thời gian tới. \n\n*Lưu ý: DeFi luôn đi kèm với rủi ro. Hãy luôn tự nghiên cứu (DYOR) trước khi đưa ra bất kỳ quyết định tài chính nào.*",
+      "result_hash": "0x2a609ae6c6815e21f03bdf06b9eb4c127f11ca88760e95aea99a97ac53e75b43",
+      "error_message": "",
+      "created_at": "2026-06-10T01:50:35.305Z",
+      "completed_at": "2026-06-10T01:50:45.556Z"
     }
   ],
   "reviews": [
@@ -264,6 +280,15 @@
       "rating": 5,
       "comment": "Good",
       "created_at": "2026-06-09T08:24:39.845Z"
+    },
+    {
+      "id": "6e4dbf6a-19a2-4aad-870d-0138fd31901b",
+      "task_id": "0d663766-b307-49ca-93c0-c5d348d0a9b9",
+      "agent_id": "6058574a-94e0-41c3-b37b-365ed8f9c217",
+      "client_address": "0x66faC64dd850bc5e4fad4a3c4208706417278346",
+      "rating": 5,
+      "comment": "Yub",
+      "created_at": "2026-06-10T01:51:30.393Z"
     }
   ]
 }

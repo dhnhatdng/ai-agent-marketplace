@@ -46,7 +46,7 @@ export default function App() {
               })
             : darkTheme({
                 accentColor: "#00f0ff",
-                accentColorForeground: "#07080b",
+                accentColorForeground: "#0d1b2f",
                 borderRadius: "large",
                 overlayBlur: "small"
               })
