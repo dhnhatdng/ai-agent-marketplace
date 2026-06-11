@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { fetchWebSearch } from "./webSearch";
 
 const rawApiKey = process.env.OPENAI_API_KEY || "";
 let apiKey = rawApiKey.trim();
@@ -116,12 +117,25 @@ export async function processTaskWithAI(
   console.log("------------------");
 
   try {
+    let searchContext = "";
+    const isSynthesis = taskDescription.includes("You delegated a sub-task") || taskDescription.includes("synthesize");
+    if (process.env.TAVILY_API_KEY && !isSynthesis) {
+      try {
+        const searchResult = await fetchWebSearch(taskDescription);
+        if (searchResult) {
+          searchContext = `\n\n=== REAL-TIME WEB SEARCH CONTEXT ===\nUse this real-time information to answer the user request:\n${searchResult}\n===================================`;
+        }
+      } catch (err: any) {
+        console.warn("⚠️ Web Search Grounding failed:", err.message);
+      }
+    }
+
     const response = await openai.chat.completions.create({
       model: apiModel,
       messages: [
         {
           role: "system",
-          content: `${systemPrompt}\n\nQuy tắc quan trọng:
+          content: `${systemPrompt}${searchContext}\n\nQuy tắc quan trọng:
 - Trả lời bằng ngôn ngữ mà user dùng trong task description
 - Chỉ trả về nội dung kết quả, không thêm lời chào hỏi hay giải thích
 - Nếu task không rõ ràng, hãy làm theo hiểu biết tốt nhất của bạn`,
