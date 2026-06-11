@@ -125,3 +125,12 @@ ai-agent-marketplace/
 | GET | `/api/tasks` | Danh sách tasks |
 | GET | `/api/tasks/:id` | Chi tiết task (dùng để poll status) |
 | POST | `/api/tasks` | Tạo task mới |
+
+---
+
+## 👤 Tác giả (Author & Copyright)
+
+* **Developer**: Hoang Nhat ([dhnhatdng](https://github.com/dhnhatdng))
+* **Role**: Full-stack Web3 & AI Engineer
+* **License**: MIT License - xem file [LICENSE](file:///g:/ARC/ai-agent-marketplace/LICENSE) để biết chi tiết.
+* **Copyright**: © 2026 Hoang Nhat. All rights reserved.
