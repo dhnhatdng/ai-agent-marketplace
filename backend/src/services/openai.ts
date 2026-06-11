@@ -116,8 +116,8 @@ export async function processTaskWithAI(
   console.log("Mapped Model:", apiModel);
   console.log("------------------");
 
+  let searchContext = "";
   try {
-    let searchContext = "";
     const isSynthesis = taskDescription.includes("You delegated a sub-task") || taskDescription.includes("synthesize");
     if (process.env.TAVILY_API_KEY && !isSynthesis) {
       try {
@@ -156,7 +156,50 @@ export async function processTaskWithAI(
       model: response.model,
     };
   } catch (error: any) {
-    console.warn(`⚠️ OpenAI API error: ${error.message}. Falling back to mock AI generation.`);
+    let fallbackModel = "";
+    if (apiModel === "gemini-2.5-flash") {
+      fallbackModel = "gemini-1.5-flash";
+    } else if (apiModel === "gemini-2.5-pro") {
+      fallbackModel = "gemini-1.5-pro";
+    }
+
+    if (fallbackModel && !isMockMode && openai) {
+      console.warn(`⚠️ Model ${apiModel} failed with error: ${error.message}. Attempting fallback to ${fallbackModel}...`);
+      try {
+        const response = await openai.chat.completions.create({
+          model: fallbackModel,
+          messages: [
+            {
+              role: "system",
+              content: `${systemPrompt}${searchContext}\n\nQuy tắc quan trọng:
+- Trả lời bằng ngôn ngữ mà user dùng trong task description
+- Chỉ trả về nội dung kết quả, không thêm lời chào hỏi hay giải thích
+- Nếu task không rõ ràng, hãy làm theo hiểu biết tốt nhất của bạn`,
+            },
+            {
+              role: "user",
+              content: taskDescription,
+            },
+          ],
+          max_tokens: 2000,
+          temperature: 0.7,
+        });
+
+        const content = response.choices[0].message.content || "";
+        console.log(`✅ Fallback model ${fallbackModel} succeeded!`);
+        return {
+          content,
+          tokensUsed: response.usage?.total_tokens || 0,
+          model: response.model,
+        };
+      } catch (fallbackErr: any) {
+        console.warn(`⚠️ Fallback model ${fallbackModel} also failed: ${fallbackErr.message}.`);
+      }
+    } else {
+      console.warn(`⚠️ OpenAI API error: ${error.message}.`);
+    }
+
+    console.warn("Falling back to mock AI generation.");
     
     // Debug: Fetch raw response from Google to inspect the error body
     try {
