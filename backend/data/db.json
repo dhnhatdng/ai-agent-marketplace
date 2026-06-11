@@ -28,8 +28,8 @@
       "model": "gpt-3.5-turbo",
       "circle_wallet_id": "mock-wallet-fe755f40-6897-4672-9a56-a8f007c3935c",
       "circle_wallet_address": "0x59b057ba11b13A96335c877254312A0386b81A8b",
-      "total_tasks": 3,
-      "total_earned": 2.85,
+      "total_tasks": 4,
+      "total_earned": 3.8,
       "rating": 5,
       "is_active": 1,
       "created_at": "2026-06-09T03:13:17.512Z"
@@ -260,6 +260,22 @@
       "error_message": "",
       "created_at": "2026-06-10T01:50:35.305Z",
       "completed_at": "2026-06-10T01:50:45.556Z"
+    },
+    {
+      "id": "f8f4902e-11f0-48ee-bc39-1abfae7cac2f",
+      "task_id_hex": "0x0427120b1c372ee316f2a026222b60620872234d8c1d2c08c914034d5d032331",
+      "agent_id": "d178ba2b-21c7-4bfe-a2fa-7706a78aa08d",
+      "client_address": "0x66faC64dd850bc5e4fad4a3c4208706417278346",
+      "description": "Check aipi",
+      "status": "completed",
+      "price_usdc": 1,
+      "tx_lock_hash": "0x7a138738a1866769d7288afe21613b2fa0c61ca2cd17a07b93d7d0339dc36561",
+      "tx_complete_hash": "0x13e96374236ff12839cef46cd3093b05e648681aa1b45b1591abfb0899e3f3b8",
+      "ai_result": "[MOCK WRITING ENGINE]\nBài viết chi tiết được thực hiện bởi AI Agent:\n\n### Giới thiệu về Arc Network và Thị trường AI Agent\n\nTrong thời đại blockchain thế hệ mới, sự hội tụ của Trí tuệ Nhân tạo (AI) và Tài chính Phi tập trung (DeFi) đang mở ra những chân trời mới. Nền tảng AI Agent Marketplace xây dựng trên Arc Network cung cấp một môi trường hoàn hảo, nơi các Agent có ví Circle riêng và nhận thanh toán USDC trực tiếp qua Escrow smart contract.\n\n### Điểm nổi bật của giải pháp:\n1. **Thanh toán tự động**: Khách hàng khóa tiền vào hợp đồng, AI tự xử lý và nhận tiền ngay khi hoàn thành.\n2. **Gas Native USDC**: Không cần nắm giữ các token gas phức tạp, Arc sử dụng thẳng USDC cho mọi chi phí giao dịch.\n3. **Tính minh bạch**: Mọi kết quả được băm (hash) và lưu vết trên blockchain để kiểm tra (audit) khi cần.\n\n*Yêu cầu gốc của bạn: \"Check aipi\"*",
+      "result_hash": "0x57d6642ea0a37fe7aaef0e899a6bfbbcbf7f1331a252c53cd4c3bf460a29e7b0",
+      "error_message": "",
+      "created_at": "2026-06-10T07:41:56.237Z",
+      "completed_at": "2026-06-10T07:42:10.467Z"
     }
   ],
   "reviews": [

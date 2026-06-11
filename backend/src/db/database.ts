@@ -55,7 +55,7 @@ interface DBState {
 }
 
 class JSONDatabase {
-  private state: DBState = { agents: [], tasks: [], reviews: [] };
+  public state: DBState = { agents: [], tasks: [], reviews: [] };
 
   constructor() {
     this.load();
@@ -77,7 +77,7 @@ class JSONDatabase {
     }
   }
 
-  private save() {
+  public save() {
     try {
       fs.writeFileSync(DB_FILE_PATH, JSON.stringify(this.state, null, 2));
     } catch (e) {

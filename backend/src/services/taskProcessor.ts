@@ -25,19 +25,123 @@ export async function processTask(taskId: string): Promise<void> {
   db.prepare("UPDATE tasks SET status = 'processing' WHERE id = ?").run(taskId);
 
   try {
-    // 4. Gọi GPT-4o
+    // 4. Gọi AI (với hướng dẫn subcontract nếu có nhiều agent)
+    const allAgents = db.state.agents.filter((a: any) => a.id !== task.agent_id && a.is_active === 1);
+    const agentsListStr = allAgents.map((a: any) => `- ID: ${a.id}, Name: ${a.name}, Price: ${a.price_usdc} USDC, Category: ${a.category}, Description: ${a.description}`).join("\n");
+    
+    let subcontractInstruction = "";
+    if (allAgents.length > 0) {
+      subcontractInstruction = `\n\n=== AGENT-TO-AGENT DELEGATION ===
+You have the power to autonomously delegate a sub-task to one of the following specialized agents in the marketplace if you think it would help you achieve a better result. To delegate, you MUST start your response with a JSON block in this exact format:
+{
+  "subcontract": {
+    "agent_id": "CHOSEN_AGENT_ID",
+    "prompt": "Specific instruction for the subcontracted agent",
+    "amount_usdc": 0.5
+  }
+}
+And then output your general thoughts or explanation.
+Note: You can only delegate if the amount_usdc is less than or equal to your own price (${task.price_usdc} USDC).
+
+Here are the available agents you can delegate to:
+${agentsListStr}
+
+If you do NOT want to delegate or subcontract, simply reply with your direct answer without the JSON block.
+=================================`;
+    }
+
+    const enhancedSystemPrompt = agent.system_prompt + subcontractInstruction;
+
     console.log(`   📡 Calling ${agent.model}...`);
     const aiResult = await processTaskWithAI(
-      agent.system_prompt,
+      enhancedSystemPrompt,
       task.description,
       agent.model
     );
     console.log(`   ✅ AI responded (${aiResult.tokensUsed} tokens)`);
 
+    let finalContent = aiResult.content;
+    let subcontractData: any = null;
+
+    // Check if there is a subcontract JSON block at the start of the content
+    const jsonMatch = aiResult.content.match(/^\s*\{\s*"subcontract"\s*:\s*\{[\s\S]+?\}\s*\}/);
+    if (jsonMatch) {
+      try {
+        const jsonBlock = JSON.parse(jsonMatch[0]);
+        const { agent_id, prompt, amount_usdc } = jsonBlock.subcontract;
+        
+        // Find the subcontracted agent
+        const subAgent = db.state.agents.find((a: any) => a.id === agent_id);
+        if (subAgent) {
+          console.log(`🤖 [A2A Subcontracting] Agent ${agent.name} is subcontracting to ${subAgent.name} for ${amount_usdc} USDC...`);
+          
+          // Trigger a Circle transfer from Agent A to Agent B (simulate or real)
+          let transferTxHash = `mock-transfer-${Math.random().toString(36).substring(2, 15)}`;
+          try {
+            const { transferFromAgentWallet } = require("./circleWallet");
+            transferTxHash = await transferFromAgentWallet(
+              agent.circle_wallet_id,
+              subAgent.circle_wallet_address,
+              amount_usdc.toString()
+            );
+            console.log(`🤖 [A2A Subcontracting] Circle USDC transfer successful: ${transferTxHash}`);
+          } catch (txErr: any) {
+            console.error(`🤖 [A2A Subcontracting] Circle USDC transfer failed, falling back to simulated hash:`, txErr.message);
+          }
+
+          // Execute sub-task using Agent B
+          console.log(`🤖 [A2A Subcontracting] Calling sub-agent ${subAgent.name}...`);
+          const subtaskResult = await processTaskWithAI(
+            subAgent.system_prompt,
+            prompt,
+            subAgent.model
+          );
+          console.log(`🤖 [A2A Subcontracting] Sub-agent responded.`);
+
+          // Feed result back to Agent A to synthesize the final answer
+          const synthesisPrompt = `You delegated a sub-task to ${subAgent.name} (ID: ${agent_id}) with prompt: "${prompt}".
+Their execution result is:
+"${subtaskResult.content}"
+
+Now, synthesize this result and your own knowledge into a final, comprehensive response to the original task request: "${task.description}". Do NOT include any JSON subcontract blocks in this final answer.`;
+
+          console.log(`🤖 [A2A Subcontracting] Synthesizing final answer using Agent ${agent.name}...`);
+          const finalResult = await processTaskWithAI(
+            agent.system_prompt,
+            synthesisPrompt,
+            agent.model
+          );
+          
+          finalContent = finalResult.content;
+          subcontractData = {
+            agent_id,
+            agent_name: subAgent.name,
+            prompt,
+            amount_usdc,
+            tx_hash: transferTxHash,
+            ai_result: subtaskResult.content
+          };
+        }
+      } catch (err: any) {
+        console.error(`⚠️ Failed to parse/execute subcontracting JSON:`, err.message);
+      }
+    }
+
     // 5. Release escrow onchain
     console.log(`   ⛓️ Completing task onchain...`);
-    const txHash = await completeTaskOnChain(taskId, aiResult.content);
+    const txHash = await completeTaskOnChain(taskId, finalContent);
     console.log(`   ✅ TX: ${txHash}`);
+
+    // Mutate the record directly in state to store subcontract details BEFORE saving
+    const taskRecord = db.state.tasks.find((t: any) => t.id === taskId);
+    if (taskRecord && subcontractData) {
+      taskRecord.subcontract_agent_id = subcontractData.agent_id;
+      taskRecord.subcontract_agent_name = subcontractData.agent_name;
+      taskRecord.subcontract_prompt = subcontractData.prompt;
+      taskRecord.subcontract_price_usdc = subcontractData.amount_usdc;
+      taskRecord.subcontract_tx_hash = subcontractData.tx_hash;
+      taskRecord.subcontract_ai_result = subcontractData.ai_result;
+    }
 
     // 6. Update DB
     db.prepare(`
@@ -48,7 +152,7 @@ export async function processTask(taskId: string): Promise<void> {
         tx_complete_hash = ?,
         completed_at = datetime('now')
       WHERE id = ?
-    `).run(aiResult.content, taskIdToBytes32(aiResult.content), txHash, taskId);
+    `).run(finalContent, taskIdToBytes32(finalContent), txHash, taskId);
 
     // 7. Update agent stats
     db.prepare(`

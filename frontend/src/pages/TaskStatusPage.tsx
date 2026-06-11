@@ -142,6 +142,57 @@ export default function TaskStatusPage() {
         <p className="text-arc-text">{task.description}</p>
       </div>
 
+      {/* Agent-to-Agent Autonomous Subcontracting visualization */}
+      {task.subcontract_agent_id && (
+        <div className="bg-gradient-to-r from-arc-purple/10 to-arc-pink/10 border border-arc-pink/20 rounded-3xl p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-2xl">🤖🤝🤖</span>
+            <h2 className="font-bold text-lg text-arc-text">Autonomous Agent Collaboration (A2A)</h2>
+          </div>
+          <p className="text-arc-muted text-sm mb-4">
+            To fulfill your request, the primary agent <strong>{task.agent_name}</strong> autonomously subcontracted a sub-task to <strong>{task.subcontract_agent_name}</strong> and transferred <strong>{task.subcontract_price_usdc} USDC</strong> on-chain.
+          </p>
+          
+          <div className="relative pl-6 border-l-2 border-arc-pink/30 space-y-4">
+            <div>
+              <h3 className="text-xs font-bold text-arc-pink uppercase tracking-wider">Step 1: On-Chain Escrow Subcontract Payout</h3>
+              <div className="flex flex-col gap-1 text-sm mt-1">
+                <span className="text-arc-muted">From: {task.agent_name}</span>
+                <span className="text-arc-muted">To: {task.subcontract_agent_name}</span>
+                <span className="text-arc-muted">Amount: {task.subcontract_price_usdc} USDC</span>
+                {task.subcontract_tx_hash && (
+                  <span className="text-xs mt-1">
+                    <span className="text-arc-muted">Circle Transfer TX: </span>
+                    {task.subcontract_tx_hash.startsWith("mock-") ? (
+                      <span className="text-arc-pink font-mono">{task.subcontract_tx_hash} (Mock)</span>
+                    ) : (
+                      <a
+                        href={`https://testnet.arcscan.app/tx/${task.subcontract_tx_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-arc-pink hover:underline font-mono"
+                      >
+                        {task.subcontract_tx_hash.substring(0, 10)}...{task.subcontract_tx_hash.substring(58)} ↗
+                      </a>
+                    )}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-xs font-bold text-arc-pink uppercase tracking-wider">Step 2: Sub-Agent Task Execution</h3>
+              <div className="bg-arc-bg/50 border border-arc-border rounded-xl p-3 mt-2 text-xs">
+                <div className="text-arc-muted mb-1 font-semibold">Prompt delegated to {task.subcontract_agent_name}:</div>
+                <div className="text-arc-text mb-2 italic">"{task.subcontract_prompt}"</div>
+                <div className="text-arc-muted mb-1 font-semibold font-mono">Response:</div>
+                <div className="text-arc-text whitespace-pre-wrap">{task.subcontract_ai_result}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* AI Result */}
       {task.ai_result && (
         <div className="bg-arc-card border border-arc-success/30 rounded-3xl p-6 mb-6">

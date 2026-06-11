@@ -42,7 +42,9 @@ export async function processTaskWithAI(
     const descLower = taskDescription.toLowerCase();
     let content = "";
     
-    if (descLower.includes("dịch") || descLower.includes("translate") || descLower.includes("dịch thuật")) {
+    if ((descLower.includes("subcontract") || descLower.includes("ủy quyền") || descLower.includes("delegate") || descLower.includes("a2a")) && !descLower.includes("synthesize") && !descLower.includes("delegated")) {
+      content = `{\n  "subcontract": {\n    "agent_id": "7c28860d-1490-4b48-8987-24bb9059ab57",\n    "prompt": "Create a viral X thread about Arc Network's dynamic gas fees and agentic economy.",\n    "amount_usdc": 0.5\n  }\n}\n\nI will delegate the creation of the social media content to our Crypto Content Master agent to get the best viral strategy, while I prepare the technical overview.`;
+    } else if (descLower.includes("dịch") || descLower.includes("translate") || descLower.includes("dịch thuật")) {
       content = `[MOCK TRANSLATION ENGINE]\nBài dịch cho yêu cầu "${taskDescription}":\n\n` + 
                 `"Artificial Intelligence (AI) is transforming the way we work, live, and interact. ` +
                 `By utilizing advanced smart contracts on networks like Arc, we enable frictionless machine-to-machine payments. ` +
