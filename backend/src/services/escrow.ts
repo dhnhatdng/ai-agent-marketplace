@@ -83,6 +83,32 @@ export function taskIdToBytes32(taskId: string): string {
 }
 
 /**
+ * Lấy phí gas động từ mạng lưới Arc Testnet hoặc fallback
+ */
+async function getDynamicGasOptions(): Promise<{ maxFeePerGas: bigint; maxPriorityFeePerGas: bigint }> {
+  try {
+    if (provider) {
+      const feeData = await provider.getFeeData();
+      if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
+        // Tăng thêm 15% cho maxFeePerGas để giao dịch được ưu tiên và không bị kẹt
+        const adjustedMaxFee = (feeData.maxFeePerGas * 115n) / 100n;
+        return {
+          maxFeePerGas: adjustedMaxFee,
+          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+        };
+      }
+    }
+  } catch (error: any) {
+    console.warn("⚠️ Failed to fetch dynamic gas fee data, falling back to defaults:", error.message);
+  }
+  
+  return {
+    maxFeePerGas: ethers.parseUnits("25", 9), // 25 Gwei
+    maxPriorityFeePerGas: ethers.parseUnits("1.5", 9), // 1.5 Gwei
+  };
+}
+
+/**
  * Operator hoàn thành task onchain → release USDC cho agent
  */
 export async function completeTaskOnChain(
@@ -97,12 +123,30 @@ export async function completeTaskOnChain(
   const taskIdBytes32 = taskIdToBytes32(taskId);
   const resultHash = keccak256(toUtf8Bytes(aiResult));
 
-  const tx = await escrowContract.completeTask(taskIdBytes32, resultHash, {
-    maxFeePerGas: ethers.parseUnits("20", 9),
-    maxPriorityFeePerGas: ethers.parseUnits("1", 9),
-  });
-  await tx.wait();
-  return tx.hash;
+  const maxRetries = 3;
+  let delayMs = 2000;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`⛓️ [On-chain attempt ${attempt}/${maxRetries}] Sending completeTask...`);
+      const gasOptions = await getDynamicGasOptions();
+      console.log(`   Dynamic gas: maxFeePerGas=${ethers.formatUnits(gasOptions.maxFeePerGas, 9)} Gwei, maxPriorityFeePerGas=${ethers.formatUnits(gasOptions.maxPriorityFeePerGas, 9)} Gwei`);
+      
+      const tx = await escrowContract.completeTask(taskIdBytes32, resultHash, gasOptions);
+      console.log(`   Tx sent: ${tx.hash}. Waiting for confirmation...`);
+      await tx.wait();
+      return tx.hash;
+    } catch (error: any) {
+      console.error(`   ❌ Attempt ${attempt} failed:`, error.message);
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      console.log(`   🔄 Retrying in ${delayMs / 1000} seconds...`);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      delayMs *= 2;
+    }
+  }
+  throw new Error("Transaction execution failed after maximum retries");
 }
 
 /**
@@ -134,12 +178,30 @@ export async function refundTaskOnChain(taskId: string): Promise<string> {
 
   const taskIdBytes32 = taskIdToBytes32(taskId);
 
-  const tx = await escrowContract.cancelTaskByOperator(taskIdBytes32, {
-    maxFeePerGas: ethers.parseUnits("20", 9),
-    maxPriorityFeePerGas: ethers.parseUnits("1", 9),
-  });
-  await tx.wait();
-  return tx.hash;
+  const maxRetries = 3;
+  let delayMs = 2000;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`⛓️ [On-chain attempt ${attempt}/${maxRetries}] Sending cancelTaskByOperator...`);
+      const gasOptions = await getDynamicGasOptions();
+      console.log(`   Dynamic gas: maxFeePerGas=${ethers.formatUnits(gasOptions.maxFeePerGas, 9)} Gwei, maxPriorityFeePerGas=${ethers.formatUnits(gasOptions.maxPriorityFeePerGas, 9)} Gwei`);
+
+      const tx = await escrowContract.cancelTaskByOperator(taskIdBytes32, gasOptions);
+      console.log(`   Tx sent: ${tx.hash}. Waiting for confirmation...`);
+      await tx.wait();
+      return tx.hash;
+    } catch (error: any) {
+      console.error(`   ❌ Attempt ${attempt} failed:`, error.message);
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      console.log(`   🔄 Retrying in ${delayMs / 1000} seconds...`);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      delayMs *= 2;
+    }
+  }
+  throw new Error("Transaction execution failed after maximum retries");
 }
 
 export { escrowContract, provider };
