@@ -77,13 +77,14 @@ export default function CreateAgentPage() {
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Deploy Custom AI Agent</h1>
-        <p className="text-arc-muted">Create and monetize your own autonomous AI Assistant with custom pricing and prompts.</p>
+        <p className="text-arc-muted text-sm sm:text-base">Create and monetize your own autonomous AI Assistant with custom pricing and prompts.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Form Column */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-arc-card border border-arc-border rounded-3xl p-8 shadow-sm">
+        <div className="lg:col-span-7 space-y-4">
+          <h3 className="text-lg font-bold text-arc-text">Configure Agent</h3>
+          <div className="bg-arc-card border border-arc-border rounded-2xl p-6 shadow-sm">
             <form onSubmit={handleDeploy} className="space-y-5">
               {formError && (
                 <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm">
@@ -130,7 +131,7 @@ export default function CreateAgentPage() {
                   <select
                     value={category}
                     onChange={e => setCategory(e.target.value)}
-                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
+                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm bg-arc-card"
                   >
                     <option value="writing">✍️ Writing</option>
                     <option value="analysis">📊 Analysis</option>
@@ -145,7 +146,7 @@ export default function CreateAgentPage() {
                   <select
                     value={model}
                     onChange={e => setModel(e.target.value)}
-                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm"
+                    className="w-full bg-arc-bg border border-arc-border rounded-xl px-3 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm bg-arc-card"
                   >
                     <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended)</option>
                     <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite (Fast)</option>
@@ -171,11 +172,11 @@ export default function CreateAgentPage() {
                 <label className="block text-xs font-semibold text-arc-muted mb-1.5 uppercase tracking-wider">System Prompt (AI Persona)</label>
                 <textarea
                   required
-                  rows={5}
+                  rows={4}
                   placeholder="Define the behavior, rules, and style of your Agent. Example: 'You are an expert crypto translator. Translate the text into Vietnamese while keeping technical terms correct.'"
                   value={systemPrompt}
                   onChange={e => setSystemPrompt(e.target.value)}
-                  className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm resize-y"
+                  className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm resize-none"
                 />
               </div>
 
@@ -206,8 +207,8 @@ export default function CreateAgentPage() {
         </div>
 
         {/* Live Preview Column */}
-        <div className="space-y-6">
-          <h3 className="text-lg font-bold">Live Card Preview</h3>
+        <div className="lg:col-span-5 space-y-4">
+          <h3 className="text-lg font-bold text-arc-text">Live Preview</h3>
           
           <div className="bg-arc-card border border-arc-border rounded-2xl p-6 relative hover:shadow-lg transition-all duration-200 border-arc-pink/20 shadow-md">
             <div className="absolute top-3 right-3 bg-arc-pink/15 text-arc-pink text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border border-arc-pink/25">
@@ -238,14 +239,40 @@ export default function CreateAgentPage() {
             </div>
           </div>
 
-          <div className="bg-arc-card/50 border border-arc-border rounded-2xl p-5 text-xs text-arc-muted space-y-2">
-            <p className="font-semibold text-arc-text">What happens when you deploy?</p>
-            <ol className="list-decimal pl-4 space-y-1">
-              <li>Your Agent is instantly registered in the marketplace DB.</li>
-              <li>The backend interacts with Circle API to provision a dedicated non-custodial wallet address.</li>
-              <li>Users can immediately find and hire your agent.</li>
-              <li>You can monitor task metrics and withdraw earned USDC directly from your Dashboard page.</li>
-            </ol>
+          <div className="bg-arc-card border border-arc-border rounded-2xl p-6 space-y-4">
+            <h4 className="font-bold text-sm text-arc-text flex items-center gap-2">
+              <span>🚀</span> What happens when you deploy?
+            </h4>
+            <div className="space-y-4 text-xs text-arc-muted">
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-arc-pink/10 text-arc-pink border border-arc-pink/20 flex items-center justify-center font-bold font-mono">1</span>
+                <div>
+                  <strong className="text-arc-text block mb-0.5">Instant Registration</strong>
+                  Your Agent is immediately listed in the public marketplace for users to browse.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-arc-purple/10 text-arc-purple border border-arc-purple/20 flex items-center justify-center font-bold font-mono">2</span>
+                <div>
+                  <strong className="text-arc-text block mb-0.5">Circle Wallet Provisioning</strong>
+                  The platform generates a secure, non-custodial smart wallet for payments using Circle API.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-arc-pink/10 text-arc-pink border border-arc-pink/20 flex items-center justify-center font-bold font-mono">3</span>
+                <div>
+                  <strong className="text-arc-text block mb-0.5">Active Hiring Status</strong>
+                  Clients can hire your agent immediately via smart contract escrow.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-arc-purple/10 text-arc-purple border border-arc-purple/20 flex items-center justify-center font-bold font-mono">4</span>
+                <div>
+                  <strong className="text-arc-text block mb-0.5">Revenue & Dashboard</strong>
+                  Track task execution metrics and withdraw accumulated USDC directly from your dashboard.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
