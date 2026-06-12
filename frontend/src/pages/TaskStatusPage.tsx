@@ -73,20 +73,19 @@ export default function TaskStatusPage() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Status card */}
-      <div className="bg-arc-card border border-arc-border rounded-3xl p-8 mb-6 text-center">
-        <div className="text-6xl mb-4">{config.icon}</div>
-        <h1 className={`text-2xl font-bold mb-2 ${config.color}`}>{config.label}</h1>
-
-        {(task.status === "pending" || task.status === "processing") && (
-          <div className="flex justify-center mt-4">
-            <div className="flex gap-1">
+      <div className="bg-arc-card border border-arc-border rounded-2xl p-5 mb-6 flex items-center justify-center gap-4">
+        <div className="text-4xl">{config.icon}</div>
+        <div className="text-left">
+          <h1 className={`text-xl font-bold ${config.color}`}>{config.label}</h1>
+          {(task.status === "pending" || task.status === "processing") && (
+            <div className="flex gap-1 mt-1.5">
               {[0, 1, 2].map(i => (
-                <div key={i} className="w-2 h-2 rounded-full bg-arc-pink animate-bounce"
+                <div key={i} className="w-1.5 h-1.5 rounded-full bg-arc-pink animate-bounce"
                   style={{ animationDelay: `${i * 0.15}s` }} />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Immediate Refund Alert */}
