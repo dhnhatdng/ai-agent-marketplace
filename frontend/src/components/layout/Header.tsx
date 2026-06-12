@@ -1,6 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NavLink } from "react-router-dom";
-import { useAccount, useDisconnect } from "wagmi";
 
 const NAV = [
   { to: "/marketplace", label: "Marketplace" },
@@ -14,9 +13,6 @@ interface HeaderProps {
 }
 
 export default function Header({ isLight, setIsLight }: HeaderProps) {
-  const { isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-
   return (
     <header className="sticky top-0 z-40 border-b border-arc-border bg-arc-bg/90 backdrop-blur transition-all">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -57,25 +53,15 @@ export default function Header({ isLight, setIsLight }: HeaderProps) {
           </button>
         </nav>
 
-        {/* Wallet & Disconnect */}
-        <div className="flex items-center gap-3">
-          <ConnectButton
-            accountStatus="avatar"
-            chainStatus="icon"
-            showBalance={{ smallScreen: false, largeScreen: true }}
-          />
-          {isConnected && (
-            <button
-              onClick={() => disconnect()}
-              className="px-3.5 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 text-xs font-semibold transition-all"
-              title="Ngắt kết nối ví"
-            >
-              Ngắt kết nối
-            </button>
-          )}
-        </div>
+        {/* Wallet */}
+        <ConnectButton
+          accountStatus="avatar"
+          chainStatus="icon"
+          showBalance={{ smallScreen: false, largeScreen: true }}
+        />
       </div>
     </header>
   );
 }
+
 
