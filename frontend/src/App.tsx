@@ -59,7 +59,7 @@ export default function App() {
               <Header isLight={isLight} setIsLight={setIsLight} />
 
               {/* Main Content Area */}
-              <main className="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
+              <main className="flex-grow max-w-6xl w-full mx-auto px-4 py-8 pb-24">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/marketplace" element={<MarketplacePage />} />
