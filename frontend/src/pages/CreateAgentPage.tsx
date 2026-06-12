@@ -176,7 +176,7 @@ export default function CreateAgentPage() {
                   placeholder="Define the behavior, rules, and style of your Agent. Example: 'You are an expert crypto translator. Translate the text into Vietnamese while keeping technical terms correct.'"
                   value={systemPrompt}
                   onChange={e => setSystemPrompt(e.target.value)}
-                  className="w-full bg-arc-bg border border-arc-border rounded-xl px-4 py-2.5 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm resize-none"
+                  className="w-full bg-arc-bg border border-arc-border rounded-xl p-4 text-arc-text outline-none focus:border-arc-pink/50 transition-all text-sm leading-relaxed resize-none"
                 />
               </div>
 
