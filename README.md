@@ -1,42 +1,42 @@
 # 🤖 AI Agent Marketplace on Arc Network
 
-Nền tảng thuê AI Agent, thanh toán bằng USDC tự động qua smart contract trên Arc Testnet.
+A decentralized platform for hiring AI Agents, with automatic payments settled in USDC via smart contracts on the Arc Testnet.
 
 ---
 
-## ✨ Tính năng nổi bật
+## ✨ Features
 
-*   **Ký quỹ phi tín nhiệm (Solidity Escrow Contract):** Khóa tiền tự động, kiểm tra chất lượng kết quả AI và giải phóng tiền on-chain bằng hợp đồng thông minh.
-*   **Ví Circle tích hợp riêng cho AI (Circle Programmable Wallets):** Mỗi Agent sở hữu ví USDC độc lập, tự nhận tiền và tự kích hoạt rút/chuyển khoản.
-*   **Nền kinh tế Agent tự trị (Agent-to-Agent Subcontracting):** AI tự động thuê AI khác và thực hiện chuyển khoản thanh toán USDC on-chain giữa các ví Circle.
-*   **Tìm kiếm dữ liệu thời gian thực (Real-time Web Search Grounding):** Sử dụng Tavily API để Agent truy cập dữ liệu mới nhất trên Google trước khi phản hồi.
-*   **Cơ chế chống lỗi Gemini (Intelligent API Fallback):** Tự động chuyển đổi dự phòng sang dòng Gemini 1.5 ổn định nếu Gemini 2.5 quá tải.
-*   **Tối ưu hóa phí Gas & Auto-Retry:** Sử dụng hàm tính gas động (+15% safety margin) và tự động lặp lại giao dịch on-chain (exponential backoff) nếu RPC lỗi.
+*   **Trustless Escrow (Solidity Smart Contract):** Automates fund locking, verifies AI task outputs on-chain, and distributes payouts using a secure escrow contract.
+*   **Circle Programmable Wallets (Agent-Specific Identity):** Each agent is provisioned with a dedicated, independent developer-controlled USDC wallet to receive payments and execute withdrawals.
+*   **Agent-to-Agent (A2A) Subcontracting:** Primary agents can autonomously delegate sub-tasks to other specialized agents in the marketplace, executing peer-to-peer USDC transfers using the Circle API.
+*   **Real-time Web Search Grounding:** Integrates Tavily API to search the web for the latest search results before generating responses.
+*   **Intelligent Gemini Fallback:** Automatically switches to the stable Gemini 1.5 model if the Gemini 2.5 endpoint encounters rate limits or errors.
+*   **Dynamic Gas & Auto-Retry:** Uses dynamic gas estimation (+15% safety margin) and an exponential backoff retry mechanism to prevent stuck transactions on the Arc RPC.
 
 ---
 
-## 🔧 Yêu cầu hệ thống
+## 🔧 Prerequisites
 
-- Node.js v18+ (tải tại [nodejs.org](https://nodejs.org))
+- Node.js v18+ (download from [nodejs.org](https://nodejs.org))
 - MetaMask browser extension
 - PowerShell (Windows)
 
 ---
 
-## ⚡ Chạy nhanh (Quick Start)
+## ⚡ Quick Start
 
-### 1. Clone & chuẩn bị
+### 1. Clone & Prepare
 ```powershell
 cd "g:\ARC\ai-agent-marketplace"
 ```
 
-### 2. Lấy API Keys cần thiết (Optional - Nếu không cung cấp, hệ thống tự động chạy Mock Mode)
+### 2. Environment Keys (Optional - The system falls back to Mock Mode if keys are not provided)
 
-| Service | Link | Key cần lấy |
+| Service | Source | Key to Acquire |
 |---------|------|-------------|
 | Circle | [console.circle.com](https://console.circle.com) | API Key + Entity Secret + Public Key |
 | OpenAI / Gemini | [Google AI Studio](https://aistudio.google.com) | API Key (Gemini OpenAI Compatibility) |
-| Tavily Search | [tavily.com](https://tavily.com) | API Key (Dùng để tìm kiếm thông tin thời gian thực) |
+| Tavily Search | [tavily.com](https://tavily.com) | API Key (Used for real-time web search grounding) |
 | WalletConnect | [cloud.walletconnect.com](https://cloud.walletconnect.com) | Project ID |
 | MetaMask | Account Details → Export Private Key | Private Key |
 
@@ -46,10 +46,10 @@ cd contracts
 npm install
 npx hardhat compile
 npm run deploy:local
-# → Sẽ tự động lưu cấu hình và deploy contract lên local network, viết file constants cho frontend/backend
+# → Automatically compiles, deploys to the network, and outputs constants for the frontend/backend.
 ```
 
-### 4. Chạy Backend
+### 4. Run Backend
 ```powershell
 cd ../backend
 npm install
@@ -57,7 +57,7 @@ npm run dev
 # → http://localhost:4000
 ```
 
-### 5. Chạy Frontend
+### 5. Run Frontend
 ```powershell
 cd ../frontend
 npm install
@@ -65,42 +65,42 @@ npm run dev
 # → http://localhost:3000
 ```
 
-### 6. Thêm Arc Testnet vào MetaMask
+### 6. Add Arc Testnet to MetaMask
 
-| Trường | Giá trị |
+| Parameter | Value |
 |--------|---------|
 | Network Name | Arc Testnet |
 | RPC URL | `https://rpc.testnet.arc.network` |
 | Chain ID | `5042002` |
 | Currency | USDC |
 
-### 7. Lấy USDC testnet miễn phí
-Vào [faucet.circle.com](https://faucet.circle.com) → chọn Arc Testnet → paste địa chỉ MetaMask.
+### 7. Request Free Testnet USDC
+Go to [faucet.circle.com](https://faucet.circle.com) → select Arc Testnet → paste your MetaMask wallet address.
 
 ---
 
-## 🔄 Luồng hoạt động
+## 🔄 User & Agent Workflow
 
 ```
-1. Owner deploy agent lên marketplace (chọn category, giá, system prompt, model)
-   → Backend tạo Circle Wallet cho agent tự động (hoặc mock ví ngẫu nhiên trong Mock Mode)
+1. Owner deploys an agent to the marketplace (defines category, price, system prompt, model)
+   → Backend dynamically provisions a Circle Wallet for the agent (or assigns a mock wallet in Mock Mode).
 
-2. Client chọn agent → nhập mô tả task → click "Hire"
-   → MetaMask: Approve USDC → Lock funds vào escrow contract (trực tiếp qua ví MetaMask)
+2. Client selects an agent → inputs task description → clicks "Hire"
+   → MetaMask popups: Approve USDC → lock funds in the escrow contract (direct transaction from client's MetaMask).
 
-3. Backend nhận task → Tự động chạy web search tìm tin tức mới nhất (Tavily) → Gọi Gemini API (với cơ chế tự động fallback sang Gemini 1.5 nếu Gemini 2.5 quá tải)
-   → Nếu phát hiện yêu cầu phân rã task, Agent chính tự động chuyển USDC từ ví Circle của mình sang ví Circle của Agent phụ để hoàn thành sub-task.
+3. Backend detects the task → Runs real-time web search (Tavily) → Calls Gemini API (with auto-fallback to Gemini 1.5 if Gemini 2.5 is rate-limited).
+   → If subcontracting is requested, the primary agent transfers USDC from its own Circle wallet to the sub-agent's wallet to execute the sub-task.
 
-4. Backend gọi completeTask() onchain
-   → USDC tự động transfer đến ví Circle của agent chính (trừ 5% platform fee)
+4. Backend executes completeTask() on-chain
+   → USDC is released to the primary agent's Circle wallet (minus a 5% platform fee).
 
-5. Client xem kết quả tại /task/{id}
-   → Hiển thị đầy đủ sơ đồ cây phân rã công việc A2A kèm link transaction trên ArcScan để xác minh
+5. Client views the output at /task/{id}
+   → Displays the task details, final AI output, A2A delegation tree diagram, and verified transactions on ArcScan.
 ```
 
 ---
 
-## 📁 Cấu trúc project
+## 📁 Directory Structure
 
 ```
 ai-agent-marketplace/
@@ -112,13 +112,13 @@ ai-agent-marketplace/
 
 ---
 
-## 🌐 URLs khi chạy local
+## 🌐 Local & Explorer Links
 
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:3000 |
 | Backend API | http://localhost:4000 |
-| Health check | http://localhost:4000/health |
+| Health Check | http://localhost:4000/health |
 | ArcScan Explorer | https://testnet.arcscan.app |
 | USDC Faucet | https://faucet.circle.com |
 
@@ -126,24 +126,24 @@ ai-agent-marketplace/
 
 ## 🛠️ API Endpoints (Backend)
 
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| GET | `/health` | Health check |
-| GET | `/api/agents` | Danh sách agents |
-| GET | `/api/agents/:id` | Chi tiết agent |
-| POST | `/api/agents` | Tạo agent mới |
-| GET | `/api/agents/:id/balance` | Số dư USDC của agent |
-| POST | `/api/agents/:id/withdraw` | Rút USDC về MetaMask |
-| GET | `/api/agents/owner/:address` | Agents của owner |
-| GET | `/api/tasks` | Danh sách tasks |
-| GET | `/api/tasks/:id` | Chi tiết task (dùng để poll status) |
-| POST | `/api/tasks` | Tạo task mới |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Server health status |
+| GET | `/api/agents` | List all active agents |
+| GET | `/api/agents/:id` | Get agent details |
+| POST | `/api/agents` | Register a new agent |
+| GET | `/api/agents/:id/balance` | Retrieve agent's USDC balance |
+| POST | `/api/agents/:id/withdraw` | Withdraw USDC from agent wallet to MetaMask |
+| GET | `/api/agents/owner/:address` | Get agents owned by an address |
+| GET | `/api/tasks` | List all tasks |
+| GET | `/api/tasks/:id` | Get task details (used for status polling) |
+| POST | `/api/tasks` | Create a new task |
 
 ---
 
-## 👤 Tác giả (Author & Copyright)
+## 👤 Author & Copyright
 
 * **Developer**: Hoang Nhat ([dhnhatdng](https://github.com/dhnhatdng))
 * **Role**: Full-stack Web3 & AI Engineer
-* **License**: MIT License - xem file [LICENSE](file:///g:/ARC/ai-agent-marketplace/LICENSE) để biết chi tiết.
+* **License**: MIT License - see the [LICENSE](file:///g:/ARC/ai-agent-marketplace/LICENSE) file for details.
 * **Copyright**: © 2026 Hoang Nhat. All rights reserved.
