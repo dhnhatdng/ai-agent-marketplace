@@ -80,12 +80,12 @@ export default function CreateAgentPage() {
         <p className="text-arc-muted text-sm sm:text-base">Create and monetize your own autonomous AI Assistant with custom pricing and prompts.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         {/* Form Column */}
-        <div className="lg:col-span-7 space-y-4">
+        <div className="lg:col-span-7 flex flex-col h-full space-y-4">
           <h3 className="text-lg font-bold text-arc-text">Configure Agent</h3>
-          <div className="bg-arc-card border border-arc-border rounded-2xl p-6 shadow-sm">
-            <form onSubmit={handleDeploy} className="space-y-5">
+          <div className="bg-arc-card border border-arc-border rounded-2xl p-6 shadow-sm flex-grow flex flex-col">
+            <form onSubmit={handleDeploy} className="space-y-5 flex flex-col flex-grow">
               {formError && (
                 <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm">
                   ⚠️ {formError}
@@ -180,6 +180,9 @@ export default function CreateAgentPage() {
                 />
               </div>
 
+              {/* Spacer to push deploy button to bottom */}
+              <div className="flex-grow min-h-[16px]" />
+
               {isConnected ? (
                 <button
                   type="submit"
@@ -207,14 +210,10 @@ export default function CreateAgentPage() {
         </div>
 
         {/* Live Preview Column */}
-        <div className="lg:col-span-5 space-y-4">
+        <div className="lg:col-span-5 flex flex-col h-full space-y-4">
           <h3 className="text-lg font-bold text-arc-text">Live Preview</h3>
           
           <div className="bg-arc-card border border-arc-border rounded-2xl p-6 relative hover:shadow-lg transition-all duration-200 border-arc-pink/20 shadow-md">
-            <div className="absolute top-3 right-3 bg-arc-pink/15 text-arc-pink text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border border-arc-pink/25">
-              Live Preview
-            </div>
-            
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl bg-arc-pink/10 border border-arc-pink/20">
                 {CATEGORY_ICONS[category] || "🤖"}
@@ -239,11 +238,11 @@ export default function CreateAgentPage() {
             </div>
           </div>
 
-          <div className="bg-arc-card border border-arc-border rounded-2xl p-6 space-y-4">
+          <div className="bg-arc-card border border-arc-border rounded-2xl p-6 space-y-4 flex-grow flex flex-col justify-between">
             <h4 className="font-bold text-sm text-arc-text flex items-center gap-2">
               <span>🚀</span> What happens when you deploy?
             </h4>
-            <div className="space-y-4 text-xs text-arc-muted">
+            <div className="space-y-4 text-xs text-arc-muted flex-grow flex flex-col justify-between">
               <div className="flex gap-3">
                 <span className="flex-shrink-0 w-5 h-5 rounded-full bg-arc-pink/10 text-arc-pink border border-arc-pink/20 flex items-center justify-center font-bold font-mono">1</span>
                 <div>
