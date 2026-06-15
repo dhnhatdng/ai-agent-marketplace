@@ -121,6 +121,12 @@ ai-agent-marketplace/
 | Health Check | http://localhost:4000/health |
 | ArcScan Explorer | https://testnet.arcscan.app |
 | USDC Faucet | https://faucet.circle.com |
+| Shelby Main Site | https://shelby.xyz/ |
+| Shelby Docs | https://docs.shelby.xyz/ |
+| Shelby Developer Portal | https://developers.shelby.xyz/ |
+| Shelby Quick-Start Repo | https://github.com/shelby/shelby-quickstart |
+| Shelby Examples Repo | https://github.com/shelby/examples |
+| Shelby Blob Explorer | https://explorer.shelby.xyz/shelbynet |
 
 ---
 

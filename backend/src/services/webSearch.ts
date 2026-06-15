@@ -7,11 +7,18 @@ export async function fetchWebSearch(query: string): Promise<string> {
     return "";
   }
 
+  // Tavily has a maximum query length limit of 400 characters.
+  // We sanitize the query by removing extra whitespaces and truncating it safely.
+  let searchQuery = query.replace(/\s+/g, " ").trim();
+  if (searchQuery.length > 390) {
+    searchQuery = searchQuery.substring(0, 390);
+  }
+
   try {
-    console.log(`📡 Performing real-time web search for query: "${query}"...`);
+    console.log(`📡 Performing real-time web search for query: "${searchQuery}"...`);
     const response = await axios.post("https://api.tavily.com/search", {
       api_key: apiKey,
-      query: query,
+      query: searchQuery,
       search_depth: "basic",
       include_answer: false,
       max_results: 3

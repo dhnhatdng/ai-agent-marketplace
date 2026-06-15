@@ -1,6 +1,7 @@
 import { getDB } from "../db/database";
 import { processTaskWithAI } from "./openai";
 import { completeTaskOnChain, refundTaskOnChain, taskIdToBytes32 } from "./escrow";
+import { uploadToShelby } from "./shelby";
 
 /**
  * Orchestrator chính: nhận task mới → gọi AI → release escrow → lưu DB
@@ -127,21 +128,37 @@ Now, synthesize this result and your own knowledge into a final, comprehensive r
       }
     }
 
-    // 5. Release escrow onchain
+    // 5. Upload final AI result to Shelby Protocol
+    let shelbyHash = "";
+    try {
+      const fileName = `task-report-${taskId}.md`;
+      const reportBuffer = Buffer.from(finalContent, "utf-8");
+      shelbyHash = await uploadToShelby(reportBuffer, fileName);
+    } catch (shelbyErr: any) {
+      console.error(`⚠️ Failed to upload result to Shelby:`, shelbyErr.message);
+    }
+
+    // Mutate the record directly in state to store subcontract and shelby details BEFORE completing on-chain
+    // This ensures that even if on-chain completeTask fails, the shelby_hash is saved.
+    const taskRecord = db.state.tasks.find((t: any) => t.id === taskId);
+    if (taskRecord) {
+      if (shelbyHash) {
+        taskRecord.shelby_hash = shelbyHash;
+      }
+      if (subcontractData) {
+        taskRecord.subcontract_agent_id = subcontractData.agent_id;
+        taskRecord.subcontract_agent_name = subcontractData.agent_name;
+        taskRecord.subcontract_prompt = subcontractData.prompt;
+        taskRecord.subcontract_price_usdc = subcontractData.amount_usdc;
+        taskRecord.subcontract_tx_hash = subcontractData.tx_hash;
+        taskRecord.subcontract_ai_result = subcontractData.ai_result;
+      }
+    }
+
+    // 6. Release escrow onchain
     console.log(`   ⛓️ Completing task onchain...`);
     const txHash = await completeTaskOnChain(taskId, finalContent);
     console.log(`   ✅ TX: ${txHash}`);
-
-    // Mutate the record directly in state to store subcontract details BEFORE saving
-    const taskRecord = db.state.tasks.find((t: any) => t.id === taskId);
-    if (taskRecord && subcontractData) {
-      taskRecord.subcontract_agent_id = subcontractData.agent_id;
-      taskRecord.subcontract_agent_name = subcontractData.agent_name;
-      taskRecord.subcontract_prompt = subcontractData.prompt;
-      taskRecord.subcontract_price_usdc = subcontractData.amount_usdc;
-      taskRecord.subcontract_tx_hash = subcontractData.tx_hash;
-      taskRecord.subcontract_ai_result = subcontractData.ai_result;
-    }
 
     // 6. Update DB
     db.prepare(`

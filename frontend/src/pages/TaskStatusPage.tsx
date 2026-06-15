@@ -207,6 +207,40 @@ export default function TaskStatusPage() {
         </div>
       )}
 
+      {/* Shelby Storage Link */}
+      {task.shelby_hash && (
+        <div className="bg-arc-card border border-[#00f0ff]/20 rounded-3xl p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🐚</span>
+            <div className="text-left">
+              <h3 className="font-bold text-[#00f0ff] text-base">Shelby Decentralized Storage</h3>
+              <p className="text-arc-muted text-xs mt-1">This report is securely backed up on Shelby Protocol, a decentralized hot storage network built on Aptos.</p>
+              {!task.shelby_hash.startsWith("mock-") && (
+                <p className="text-[#00f0ff]/60 text-xs mt-1 font-mono truncate max-w-xs">{task.shelby_hash}</p>
+              )}
+            </div>
+          </div>
+          <a
+            href={
+              task.shelby_hash.startsWith("mock-") ? "#" :
+              task.shelby_hash.startsWith("https://") ? task.shelby_hash :
+              `https://explorer.shelby.xyz/shelbynet/${task.shelby_hash}`
+            }
+            target={task.shelby_hash.startsWith("mock-") ? undefined : "_blank"}
+            rel={task.shelby_hash.startsWith("mock-") ? undefined : "noopener noreferrer"}
+            className="px-4 py-2.5 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] hover:bg-[#00f0ff]/20 text-xs font-semibold transition-all whitespace-nowrap self-stretch sm:self-auto text-center"
+            onClick={(e) => {
+              if (task.shelby_hash.startsWith("mock-")) {
+                e.preventDefault();
+                alert(`Mock Shelby hash: ${task.shelby_hash}\n\nDirect explorer links are not available for simulated mock uploads.`);
+              }
+            }}
+          >
+            {task.shelby_hash.startsWith("mock-") ? "Mock Storage active" : "Open Blob Explorer ↗"}
+          </a>
+        </div>
+      )}
+
       {/* Review Section */}
       {task.status === "completed" && (
         <>
