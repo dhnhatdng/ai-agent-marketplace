@@ -1,5 +1,7 @@
 import OpenAI from "openai";
 import { fetchWebSearch } from "./webSearch";
+import { searchSurfData } from "./surf";
+
 
 const rawApiKey = process.env.OPENAI_API_KEY || "";
 let apiKey = rawApiKey.trim();
@@ -119,14 +121,29 @@ export async function processTaskWithAI(
   let searchContext = "";
   try {
     const isSynthesis = taskDescription.includes("You delegated a sub-task") || taskDescription.includes("synthesize");
-    if (process.env.TAVILY_API_KEY && !isSynthesis) {
-      try {
-        const searchResult = await fetchWebSearch(taskDescription);
-        if (searchResult) {
-          searchContext = `\n\n=== REAL-TIME WEB SEARCH CONTEXT ===\nUse this real-time information to answer the user request:\n${searchResult}\n===================================`;
+    if (!isSynthesis) {
+      // 1. Ưu tiên tìm kiếm thông tin thị trường, on-chain từ SurfAI
+      if (process.env.SURF_API_KEY) {
+        try {
+          const surfResult = await searchSurfData(taskDescription);
+          if (surfResult) {
+            searchContext += `\n\n=== SURFAI REAL-TIME CRYPTO CONTEXT ===\n${surfResult}\n=======================================`;
+          }
+        } catch (surfErr: any) {
+          console.warn("⚠️ SurfAI Grounding failed:", surfErr.message);
         }
-      } catch (err: any) {
-        console.warn("⚠️ Web Search Grounding failed:", err.message);
+      }
+
+      // 2. Kết hợp/Dự phòng với tìm kiếm Web chung của Tavily
+      if (process.env.TAVILY_API_KEY) {
+        try {
+          const searchResult = await fetchWebSearch(taskDescription);
+          if (searchResult) {
+            searchContext += `\n\n=== REAL-TIME WEB SEARCH CONTEXT ===\nUse this real-time information to answer the user request:\n${searchResult}\n===================================`;
+          }
+        } catch (err: any) {
+          console.warn("⚠️ Web Search Grounding failed:", err.message);
+        }
       }
     }
 
@@ -136,8 +153,10 @@ export async function processTaskWithAI(
         {
           role: "system",
           content: `${systemPrompt}${searchContext}\n\nQuy tắc quan trọng:
-- Trả lời bằng ngôn ngữ mà user dùng trong task description
-- Chỉ trả về nội dung kết quả, không thêm lời chào hỏi hay giải thích
+- Trả lời bằng ngôn ngữ mà user dùng trong task description (ví dụ: Tiếng Việt tự nhiên, trôi chảy, chuyên nghiệp, không dịch word-by-word máy móc).
+- Tuyệt đối KHÔNG dịch các thuật ngữ tiếng Anh chuyên ngành như "AI Agent", "Agent", "DePIN", "Tier-1", "Web3", "escrow", "gas", "blockchain", "faucet" sang tiếng Việt (giữ nguyên gốc tiếng Anh). Không dịch "AI Agent" thành "Đại lý AI" hay "Đại lý", không dịch "Tier-1" thành "cấp độ TIÊN".
+- Viết bài viết hoặc kết quả một cách chi tiết, chất lượng, đầy đủ thông tin hữu ích và có cấu trúc rõ ràng (tránh viết quá sơ sài hoặc ngắn cụt ngủn).
+- Chỉ trả về nội dung kết quả, không thêm lời chào hỏi hay giải thích.
 - Nếu task không rõ ràng, hãy làm theo hiểu biết tốt nhất của bạn`,
         },
         {
@@ -172,8 +191,10 @@ export async function processTaskWithAI(
             {
               role: "system",
               content: `${systemPrompt}${searchContext}\n\nQuy tắc quan trọng:
-- Trả lời bằng ngôn ngữ mà user dùng trong task description
-- Chỉ trả về nội dung kết quả, không thêm lời chào hỏi hay giải thích
+- Trả lời bằng ngôn ngữ mà user dùng trong task description (ví dụ: Tiếng Việt tự nhiên, trôi chảy, chuyên nghiệp, không dịch word-by-word máy móc).
+- Tuyệt đối KHÔNG dịch các thuật ngữ tiếng Anh chuyên ngành như "AI Agent", "Agent", "DePIN", "Tier-1", "Web3", "escrow", "gas", "blockchain", "faucet" sang tiếng Việt (giữ nguyên gốc tiếng Anh). Không dịch "AI Agent" thành "Đại lý AI" hay "Đại lý", không dịch "Tier-1" thành "cấp độ TIÊN".
+- Viết bài viết hoặc kết quả một cách chi tiết, chất lượng, đầy đủ thông tin hữu ích và có cấu trúc rõ ràng (tránh viết quá sơ sài hoặc ngắn cụt ngủn).
+- Chỉ trả về nội dung kết quả, không thêm lời chào hỏi hay giải thích.
 - Nếu task không rõ ràng, hãy làm theo hiểu biết tốt nhất của bạn`,
             },
             {

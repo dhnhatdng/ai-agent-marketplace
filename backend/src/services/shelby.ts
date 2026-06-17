@@ -41,6 +41,14 @@ async function ensureInitialized() {
 
       client = new ShelbyNodeClient({
         network: networkValue,
+        apiKey: undefined,
+        aptos: {
+          clientConfig: {
+            HEADERS: {
+              "x-api-key": process.env.SHELBY_API_KEY
+            }
+          }
+        }
       });
       console.log(`🐚 Shelby Service initialized with network: ${envNetwork} and Aptos account: ${signerAccount.accountAddress.toString()}`);
     } catch (err: any) {
